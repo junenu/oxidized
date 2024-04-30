@@ -1,25 +1,26 @@
-# Operation not confirmed for APL
 # APL(ApresiaLight) is a network device from Apresia Systems, Ltd.
 
-class apl < Oxidized::Model
-    using Refinements
+class Apl < Oxidized::Model
 
-    prompt /^(\([\w.-]*\)\s[#$]|^\S+[$#]\s?)$/
-    comment '! '
-    
+    using Refinements
+    prompt /^([\w.@()-]+[#>]\s*)$/
+    comment '# '
+
     cmd 'show running-config' do |cfg|
-        cfg = cfg.each_line.to_a[3..-2].join
+        cfg = cfg.each_line.to_a[16..-7].join
         cfg
     end
 
     cfg :telnet do
-        username /^Username:/
+        username /^User:/
         password /^Password:/
     end
 
     cfg :telnet, :ssh do
-        pre_logout 'exit' do |cfg|
-            send "exit\n"
+        post_login do
+            cmd 'terminal length 0'
+            cmd 'terminal width 0'
         end
+        pre_logout 'exit'
     end
 end
