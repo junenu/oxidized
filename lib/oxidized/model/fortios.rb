@@ -22,6 +22,8 @@ class FortiOS < Oxidized::Model
   end
 
   cmd :secret do |cfg|
+    # Remove private key for encrypted configs
+    cfg.gsub! /^(\#private-encryption-key=).+/, '\\1 <configuration removed>'
     # ENC indicates an encrypted password, and secret indicates a secret string
     cfg.gsub! /(set .+ ENC) .+/, '\\1 <configuration removed>'
     cfg.gsub! /(set .*secret) .+/, '\\1 <configuration removed>'
@@ -73,9 +75,30 @@ class FortiOS < Oxidized::Model
 
     cfg << cmd('end') if @vdom_enabled
 
-    ['show | grep .', 'show full-configuration', 'show'].each do |fullcmd|
+    # Different OS have different commands - we use the first that works
+    # - For fortigate > 7 and possibly earlier versions, we use:
+    #        show | grep .                     # backup as in fortigate GUI
+    #        show full-configuration | grep .  # bakup including default values
+    #   | grep is used to avoid the --More-- prompt
+    # - It is not documented which systems need the commands without | grep:
+    #        show full-configuration
+    #        show
+    #   Document it here and make a PR on github if you know!
+    # By default, we use the configuration without default values
+    # If fullconfig: true is set in the configuration, we get the full config
+    commandlist = if vars(:fullconfig)
+                    ['show full-configuration | grep .',
+                     'show full-configuration', 'show']
+                  else
+                    ['show | grep .',
+                     'show full-configuration', 'show']
+                  end
+
+    commandlist.each do |fullcmd|
       fullcfg = cmd(fullcmd)
       next if fullcfg.lines[1..3].join =~ /(Parsing error at|command parse error)/ # Don't show for unsupported devices (e.g. FortiAnalyzer, FortiManager, FortiMail)
+
+      fullcfg.gsub! /(set comments "Error \(No order (found )?for (account )?ID \d+\) on).*/, '\\1 <stripped>"'
 
       cfg << fullcfg
       break

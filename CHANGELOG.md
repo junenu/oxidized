@@ -7,13 +7,77 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- junos: add unit test (@systeembeheerder)
+
+### Changed
+
+### Fixed
+- tplink: send 'enable' before the enable password. Fixes #3271 (@robertcheramy)
+- asyncos: fix prompt for hostnames containing "-" . Fixes #3327 (@robertcheramy)
+- sonicos: fix prompt for hostnames containing "-" . Fixes #3333 (@robertcheramy)
+
+
+## [0.31.0 – 2024-11-29]
+
+### Added
+- model for Riverbed Steelhead (@Swaeltjie)
+- model for uplink EP4440-DP OLT (@AAm-kun)
+- model for Siklu Multihaul TG radios (@bdg-robert)
+- model for VMWare NSX DFW (@elmobp)
+- model for F5OS (@teunvink)
+- cumulus: Add possibility to use NVUE (@lagertonne)
+- model for garderos (@robertcheramy)
+- unit tests framework for models with ssh input (@robertcheramy)
+- os6: Added support to Dell EMC Networking OS6 (@anubisg1)
+- model for HPE Aruba Networking Instant Mode (Aruba Instant). Fixes #3057 (@robertcheramy)
+- Add JSONFILE source (@sargon)
 
 ### Changed
 - h3c: change prompt to expect either angle (user-view) or square (system-view) brackets (@nl987)
 - xos: Hide radius and user secrets for XOS (@iriseden)
+- eos: Hide radius and snmp secrets for Arista EOS (@iriseden)
+- fortios: Hide date in acme certifcate comments (@systeembeheerder)
+- dlink: added support for 'enable admin' before getting configuration, if enable=true (@as8net)
+- dlinknextgen: strip uptime and ntp update time from config
+- Updated slackdiff.rb to use slack_ruby_client instead of slack-api (@Punicaa)
+- oxidized: options (such as credentials, etc.) now use the same resolution logic as variables and can also be defined per model in a group (@EinGlasVollKakao)
+- saos: add inventory and software status collection (@grbeneke)
+- container-image: update to phusion/baseimage:noble-1.0.0 and include security upgrades at build time (@robertcheramy)
+- container-image: use ubuntu-packages instead of gems in order to reduce container image size (@robertcheramy)
+- edgecos.rb: hide temperature and fan speed (@dhooper6430)
+- cnos: show information before config, remove secrets only when told to do so (@robje)
+- Updated slackdiff.rb to use new files.getUploadURLExternal slack file upload API instead of deprecated files.upload (@varesa)
+- Updated source/output files to reference a Source/Output module to avoid namespace duplication (@laf, @robertcheramy)
+- ios: Hide WLAN PSK, AP profile dot1x password, AP profile mgmtuser password/secret and radius COA server-key (@devon-mar)
+- ios: remove values from custom SNMP OID's, set by an EEM script (@syn-bit)
+- Update net-ssh to 7.3 to enable support for aes(128|256)gcm. Fixes #3168 (@jacobw)
+- removed time command from uplink EP4440-DP OLT model
+- fortios: variable `fullconfig` to get the configuration with default values. Fixes: #3159 (@robertcheramy)
+- container-image: install x25519 gem package to support more ssh kex. Fixes #3070 (@benasse)
+- lenovonos: Salt administrator-password line when remove_unstable_lines is set to True (@kani999)
+- lenovonos: Removes lines that started with Fan because RPM always changes. (@kani999)
 
 ### Fixed
+- fixed error for ibos when remove_secret is set (@dminuoso)
+- fixed prompt for Watchguard FirewareOS not matching the regex when the node is managed and master (@benasse)
 - fixed prompt for vyos/vyatta to allow logins with non-priviliged accounts. Fixes #3111 (@h-lopez)
+- fixed power consumption included in ArubaOS-CX diffs starting with FL.10.13.xxx. Fixes #3142 (@terratalpi)
+- fixed oxidized-web getting "version not found" when fetching a version from git and no group is defined. Fixes #2222 (@robertcheramy)
+- fixed telnet to disconnect gracefully even if it throws IOError while disconnect. Fixes #3212 (@ytti)
+- docs: run git garbage collection to address performance issues. Fixes #3121 (@robertcheramy)
+- saos: fixed handling of 'unsaved configuration' indicator in prompt (@grbeneke)
+- rgos: also strip "System uptime" for installed modules (@spike77453)
+- fixed digest authentication when using http input (@spike77453)
+- fixed aosw prompt; now working with ArubaOS 8 (@mabezi, @robertcheramy)
+- routeros: fix system info for CHR. Fixes #3180 (@systeembeheerder)
+- removed hardcoded '~/.config/oxidized/config'. Fixes #3229 (@robertcheramy)
+- linuxgeneric: updated prompt to support '$' at the end (@robertcheramy)
+- hook githubrepo: add a specific warning when rugged not installed with ssh support. Fixes #3211 (@robertcheramy)
+- hook githubrepo: works with custom branch names (@robertcheramy)
+- ios: removes secrets when config has multiple snmp-server host lines. Fixes #3239 (@robertcheramy)
+- ios: fixed device specs on ASR900 Series. Fixes #3297 (@robertcheramy, @roshnaraman)
+- netgear: prompt for gs752tpp. Fixes #3287 (@robertcheramy)
+- aoscx: fixed regex for 6400 switches to hide temperature and power (@steveneppler)
 
 
 ## [0.30.1 – 2024-04-12]
